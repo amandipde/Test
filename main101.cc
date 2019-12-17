@@ -175,56 +175,12 @@ cout<<"Line NO: "<<i<< " ID: "<< pythia.event[i].id()<< " status: "<<pythia.even
 
     } // pythia event loop 
 
-/*
-cout<<" ==============================================================================="<<endl;
-// bottom (W-prime decay)
-
-cout<<"event loop = "<<iEvent<<endl;
-
-
-
-cout<<"bottom (W-prime decay) ->"<< "Line NO: "<<index_b1<< " ID: "<<pythia.event[index_b1].idAbs()<<" status:  "<<  pythia.event[index_b1].status()<<" px: " <<pythia.event[index_b1].px()<< "  py:  "
-<<pythia.event[index_b1].py()<<"  pz:  "<< pythia.event[index_b1].pz() <<" Energy: "<<pythia.event[index_b1].e()<<" Mass:"<<pythia.event[index_b1].m()<<endl;
-
-
-//Top (wprime decay) 
-cout<<"Top (wprime decay) ->"<<"Line NO: "<<index<< " ID: "<<pythia.event[index].idAbs()<<" status:  "<<  pythia.event[index].status()<<" px: " <<pythia.event[index].px()<< "  py:  "
-<<pythia.event[index].py()<<"  pz:  "<< pythia.event[index].pz() <<" Energy: "<<pythia.event[index].e()<<" Mass:"<<pythia.event[index].m()<<endl;
-
-
-// select last top for w and b decay 
-cout<<"selcetd Top ->"<<"Line NO: "<<top_indx<< " ID: "<<pythia.event[top_indx].idAbs()<<" status:  "<<  pythia.event[top_indx].status()<<" px: " <<pythia.event[top_indx].px()<< "  py:  "
-<<pythia.event[top_indx].py()<<"  pz:  "<< pythia.event[top_indx].pz() <<" Energy: "<<pythia.event[top_indx].e()<<" Mass:"<<pythia.event[top_indx].m()<<endl;
- */
  int topdaughter1 = pythia.event[top_indx].daughter1(); // w from tau 
  int topdaughter2 = pythia.event[top_indx].daughter2();  // b from tau 
-/*
-// b2 
-cout<<"selected b2 ->"<< "Line NO: "<<topdaughter2<< " ID: "<<pythia.event[topdaughter2].idAbs()<<" status:  "<<  pythia.event[topdaughter2].status()<<" px: " <<pythia.event[topdaughter2].px()<< "  py:  "
-<<pythia.event[topdaughter2].py()<<"  pz:  "<< pythia.event[topdaughter2].pz() <<" Energy: "<<pythia.event[topdaughter2].e()<<" Mass:"<<pythia.event[topdaughter2].m()<<endl;//select b2 
 
-// w
-cout<<" W boson (Top Decay) ->"<< "Line NO: "<<topdaughter1<< " ID: "<<pythia.event[topdaughter1].idAbs()<<" status:  "<<  pythia.event[topdaughter1].status()<<" px: " <<pythia.event[topdaughter1].px()<< "  py:  "
-<<pythia.event[topdaughter1].py()<<"  pz:  "<< pythia.event[topdaughter1].pz() <<" Energy: "<<pythia.event[topdaughter1].e()<<" Mass:"<<pythia.event[topdaughter1].m()<<endl;
-
-
-// w recoil and selected W
-cout << "selected W ->"<<"Line NO: "<<W_indx<< " ID: "<<pythia.event[W_indx].idAbs()<<" status:  "<<  pythia.event[W_indx].status()<<" px: " <<pythia.event[W_indx].px()<< "  py:  "
-<<pythia.event[W_indx].py()<<"  pz:  "<< pythia.event[W_indx].pz() <<" Energy: "<<pythia.event[W_indx].e()<<" Mass:"<<pythia.event[W_indx].m()<<endl;
-*/
  int wdaughter1 = pythia.event[W_indx].daughter1(); // w from tau 
  int wdaughter2 = pythia.event[W_indx].daughter2();  // b from tau 
-/*
-// tau select 
-cout<<"tau selected ->"<< "Line NO: "<<wdaughter1<< " ID: "<<pythia.event[wdaughter1].idAbs()<<" status:  "<<  pythia.event[wdaughter1].status()<<" px: " <<pythia.event[wdaughter1].px()<< "  py:  "
-<<pythia.event[wdaughter1].py()<<"  pz:  "<< pythia.event[wdaughter1].pz() <<" Energy: "<<pythia.event[wdaughter1].e()<<" Mass:"<<pythia.event[wdaughter1].m()<<endl;
 
-cout<< "nu selected ->"<< "Line NO: "<<wdaughter2<< " ID: "<<pythia.event[wdaughter2].idAbs()<<" status:  "<<  pythia.event[wdaughter2].status()<<" px: " <<pythia.event[wdaughter2].px()<< "  py:  "
-<<pythia.event[wdaughter2].py()<<"  pz:  "<< pythia.event[wdaughter2].pz() <<" Energy: "<<pythia.event[wdaughter2].e()<<" Mass:"<<pythia.event[wdaughter2].m()<<endl;
-
-
-cout<<" ==============================================================================="<<endl;
-*/
 
 // Get the vector for top 
 
@@ -272,9 +228,6 @@ vector <fastjet::PseudoJet> inclusive_jets , sortedjets , subjets;
   fastjet::ClusterSequence clust_seq(fjInputs, jet_def);
   inclusive_jets = sorted_by_pt(clust_seq.inclusive_jets(ptmin));
 
-//  fastjet::PseudoJet top=inclusive_jets[0];
-//cout<<top.m()<<endl;
-
   if (inclusive_jets.size() < 1) continue ;
 histnfatjets1->Fill(inclusive_jets.size());
 int ijet ;
@@ -310,42 +263,7 @@ deltaR_b1_J->Fill(b1like.delta_R(inclusive_jets[ijet]));
 deltaR_b2_J->Fill(b2like.delta_R(inclusive_jets[ijet]));
 deltaR_tau_J->Fill(taulike.delta_R(inclusive_jets[ijet]));
 deltaR_top_J->Fill(toplike1.delta_R(inclusive_jets[ijet]));
-
 }
-
-int nfatjets = 0, nsorted_jets=0, nsubjets = 0, ntop_tagged =0  ; 
-//--------------------------------------------------------------------------------
-  for (unsigned int i = 0; i < inclusive_jets.size(); i++) {
- 
-nfatjets++; 
-if (fabs(inclusive_jets[i].rap()) > 3.0) continue;
-// Delta R between psuedojet and top quark
- 
-
-float DELTAR_t_j =  toplike1.delta_R(inclusive_jets[i]) ;
-float DELTAR_b1_j = b1like.delta_R(inclusive_jets[i]);
-float DELTAR_b2_j = b2like.delta_R(inclusive_jets[i]);
-float DELTAR_tau_j = taulike.delta_R(inclusive_jets[i]);
-fastjet::PseudoJet top = inclusive_jets[i];
-//deltaR_top_J->Fill(DELTAR_t_j);
-
-if ( DELTAR_t_j > 0.5 ) continue ;
-
-
-
-  //&& DELTAR_b1_j > 2.0 && DELTAR_tau_j < 1.0 && DELTAR_b2_j <1.0 )  {
-nsorted_jets++;
-//cout<<i<<endl;
-//histmass_fatjet->Fill(top.m()); 
-//deltaR_top_J->Fill(DELTAR_t_j);
-//deltaR_b1_J->Fill(b1like.delta_R(top));
-//deltaR_b2_J->Fill(b2like.delta_R(top));
-//deltaR_tau_J->Fill(taulike.delta_R(top));
-//}
-
-
-}
-//cout<<"--------------------------------------"<<endl;
 
 hist_delta_t_b1->Fill(b1like.delta_R(toplike1));
 hist_delta_t_b2->Fill(b2like.delta_R(toplike1));
