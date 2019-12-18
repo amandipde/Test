@@ -29,9 +29,6 @@ TH1F* hist_delta_t_b2= new TH1F("gen delta R of top and b2", "gen delta R of top
 TH1F* hist_delta_t_tau= new TH1F("gen delta R of top and tau", "en delta R of top and tau", 40,0.0,4);
 
 
-
-
-
   // Generator
   Pythia pythia;
   Event& event = pythia.event;
@@ -54,7 +51,7 @@ TH1F* hist_delta_t_tau= new TH1F("gen delta R of top and tau", "en delta R of to
  double R = 1.0, Rsub = 0.3;
   fastjet::RecombinationScheme recomb_scheme=fastjet::E_scheme;
   fastjet::Strategy strategy = fastjet::Best;
-  fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, R,recomb_scheme,strategy);
+  fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm, R,recomb_scheme,strategy);
   //fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm, R);
   fastjet::JetDefinition jet_def_subjet(fastjet::cambridge_algorithm, Rsub);
 
@@ -71,31 +68,10 @@ for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
 int indx=0 , top_indx =0 , W_indx=0, w=0, index_b1=0, index=0 ,truth_top=0; 
 // Add final-state particles to FastJet input vector
 std::vector <fastjet::PseudoJet> fjInputs, subjet_inputs, TOPLIKE;
- //  fjInputs.resize(0); TOPLIKE.resize(0);
-
-
-  
-
-
 
 //------------------------------------pythia event loop start --------------------
     for (int i = 0; i < pythia.event.size(); ++i)
     {
- 
-
- /*
- // Final state only
-  if (pythia.event[i].isFinal() ){
-//if (pythia.event[i].idAbs() == 5  &&  pythia.event[event[i].mother1()].idAbs() == 34) continue ; 
-  fastjet::PseudoJet particle(pythia.event[i].px(),
-          pythia.event[i].py(),
-          pythia.event[i].pz(),
-          pythia.event[i].e() );
-  particle.set_user_index(i);
-  fjInputs.push_back( particle);
-
-}
-*/
 
 if (pythia.event[i].isFinal() ){//&& event[i].isVisible() ){
    fjInputs.push_back(fastjet::PseudoJet(
@@ -110,22 +86,9 @@ if (pythia.event[i].isFinal() ){//&& event[i].isVisible() ){
 
 // top
 
-        if (pythia.event[i].idAbs() == 6) { 
-
-          
+        if (pythia.event[i].idAbs() == 6) {        
             index = i ;  
-/*  
-cout<<"Line NO: "<<i<< " ID: "<< pythia.event[i].id()<< " status: "<<pythia.event[i].status()<< "mother1 ID: "
-            <<pythia.event[event[i].mother1()].id()<< "  mother2 ID: "<<
-            pythia.event[event[i].mother2()].id()<< "   daughter1 id:"<<
-            pythia.event[event[i].daughter1()].id()<< "   daughter2 id:"<<
-            pythia.event[event[i].daughter2()].id()<< "       "<< "  px:  "<<
-            pythia.event[i].px()<< "    py:  "<<
-            pythia.event[i].py()<< "    pz:  "<<
-            pythia.event[i].pz()<< "    Energy:  "<<
-            pythia.event[i].e()<<  "    Mass:  "<<
-            pythia.event[i].m()<<endl; 
-*/
+
             //top recoil
             while(pythia.event[i].idAbs() ==6 && fabs(pythia.event[i].status()) ==52)
             {
@@ -134,9 +97,10 @@ cout<<"Line NO: "<<i<< " ID: "<< pythia.event[i].id()<< " status: "<<pythia.even
               i  = topdaughter1;
             }
             top_indx=indx;
-
 }
 
+      
+//W emission       
 if (  pythia.event[i].idAbs() == 24) {
  int topdaughter = pythia.event[top_indx].daughter1();
     if (pythia.event[topdaughter].idAbs() != 24) continue ;
@@ -156,23 +120,8 @@ if (  pythia.event[i].idAbs() == 24) {
         if (pythia.event[i].idAbs() == 34) { 
 int Wprimedaughter2 = pythia.event[i].daughter2();
 if (pythia.event[Wprimedaughter2].idAbs() == 5) index_b1 = Wprimedaughter2 ;
-/*
-cout<<"Line NO: "<<i<< " ID: "<< pythia.event[i].id()<< " status: "<<pythia.event[i].status()<< "mother1 ID: "
-            <<pythia.event[event[i].mother1()].id()<< "  mother2 ID: "<<
-            pythia.event[event[i].mother2()].id()<< "   daughter1 id:"<<
-            pythia.event[event[i].daughter1()].id()<< "   daughter2 id:"<<
-            pythia.event[event[i].daughter2()].id()<< "       "<< "  px:  "<<
-            pythia.event[i].px()<< "    py:  "<<
-            pythia.event[i].py()<< "    pz:  "<<
-            pythia.event[i].pz()<< "    Energy:  "<<
-            pythia.event[i].e()<<  "    Mass:  "<<
-            pythia.event[i].m()<<endl; 
-*/
+
 }
-
-
-
-
     } // pythia event loop 
 
  int topdaughter1 = pythia.event[top_indx].daughter1(); // w from tau 
@@ -255,8 +204,6 @@ ijet= 1;
 //cout<<"d0:  "<<d0<<"   "<<ijet<<endl;
 //cout<<"d1:  "<<d1<<"     "<<ijet<<endl;
  }
-// cout<<inclusive_jets[ijet].m()<<endl;
-
 histmass_fatjet->Fill(inclusive_jets[ijet].m());
 
 deltaR_b1_J->Fill(b1like.delta_R(inclusive_jets[ijet]));
@@ -271,8 +218,6 @@ hist_delta_t_tau->Fill(taulike.delta_R(toplike1));
 hist_mass_b_nu_tau->Fill((b2like + nu +taulike).m());
 hist_mass_b_tau->Fill((b2like + taulike).m());
 
-histnfatjets->Fill(nfatjets);
-histsortedjets->Fill(nsorted_jets);
 
   }// End of event loop.
   // Give statistics. Print histogram.
